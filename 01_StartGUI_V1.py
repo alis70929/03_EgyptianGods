@@ -39,10 +39,19 @@ class Start:
 
 class Difficulty:
     def __init__(self, partner):
+
+        # Create Difficulty window
         self.difficulty_box = Toplevel()
+
+        # Make closing using corner button use custom functionality
         self.difficulty_box.protocol('WM_DELETE_WINDOW', partial(self.close_difficulty, partner))
+
+        # Populate window
+        # Base Frame
         self.difficulty_frame = Frame(self.difficulty_box)
         self.difficulty_frame.grid()
+
+        # Heading label
         self.heading_label = Label(self.difficulty_frame, text="Difficulty Box",
                                    font="Arial 24 bold", padx=10, pady=10)
         self.heading_label.grid(row=0)
