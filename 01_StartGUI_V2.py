@@ -34,10 +34,10 @@ class Start:
         self.start_frame.grid()
 
         self.egyptian_gods_label = Label(self.start_frame, text="Egyptian Gods Quiz", font="arial 24 bold", wrap=250,bg=full_background)
-        self.egyptian_gods_label.grid(row=1)
+        self.egyptian_gods_label.grid(row=1,padx=100)
 
         self.egyptian_gods_label = Label(self.start_frame, text="Test how well you know the egyptian gods", font = "arial 14",wrap=250,bg=full_background)
-        self.egyptian_gods_label.grid(row=2)
+        self.egyptian_gods_label.grid(row=2,padx=200)
 
         self.play_button = Button(self.start_frame, text="Play",font="arial 16 bold",pady=5,padx=30,bg=button_background,command=self.to_game)
         self.play_button.grid(row=3, pady=10)

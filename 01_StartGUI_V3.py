@@ -30,13 +30,13 @@ class Start:
         # Play button
         self.start_frame.rowconfigure(index=2,weight=1)
         play_button_font = "arial {} bold".format(int(40 * percent_width))
-        self.play_button = Button(self.start_frame, text="Play",font=play_button_font,width=int(20 * percent_width), height=int(5 * percent_height),bg=button_background,command=self.to_difficulty)
+        self.play_button = Button(self.start_frame, text="Play",font=play_button_font,width=10, height=2,bg=button_background,command=self.to_difficulty)
         self.play_button.grid(row=2, column=1,pady=10,sticky=S)
 
         #Help button
         self.start_frame.rowconfigure(index=3,weight=1)
         help_button_font = "arial {} bold".format(int(30 * percent_width))
-        self.help_button = Button(self.start_frame, text="Instructions",width=int(18 * percent_width),height=int(5 * percent_height),font = help_button_font,bg=button_background, command=self.to_instructions)
+        self.help_button = Button(self.start_frame, text="Instructions",width=9 ,height=2 ,font = help_button_font,bg=button_background, command=self.to_instructions)
         self.help_button.grid(row=3,column=1, pady=10,sticky=S)
     # Open Difficuulty window
     def to_difficulty(self):
@@ -94,8 +94,8 @@ if __name__ == "__main__":
     root = Tk()
     target_height = 1080
     target_width = 1920
-    screen_width = 1920
-    screen_height = 1080
+    screen_width = 1080
+    screen_height = 720
     percent_width = (screen_width/target_width )
     percent_height = (screen_height/target_height)
     root.geometry("{}x{}".format(screen_width,screen_height))
