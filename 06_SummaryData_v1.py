@@ -3,6 +3,8 @@ from tkinter import *
 import csv
 import random
 
+from numpy import full
+
 
 
 
@@ -10,7 +12,6 @@ class Start:
     def __init__(self, parent):
         full_background = "#A88770"
         button_background = "#F1DCA7"
-
         # Setup start frame
         self.start_frame = Frame(padx=10, pady=10,bg=full_background)
         self.start_frame.grid(sticky=NSEW)
@@ -276,41 +277,45 @@ class Game:
 class Summary():
     def __init__(self,partner,game_history,correct,incorrect,difficulty):
         print(game_history)
-        partner.help_button.config(state=DISABLED)
+        full_background = "#A88770"
+        button_background = "#F1DCA7"
+
         self.summary_box = Toplevel()
         self.summary_box.protocol('WM_DELETE_WINDOW', partial(self.close_summary, partner))
-        self.summary_frame = Frame(self.summary_box)
+
+        self.summary_frame = Frame(self.summary_box,bg = full_background)
         self.summary_frame.grid()
         self.heading_label = Label(self.summary_frame, text="Game Over",
-                                    font="Arial 24 bold", padx=10, pady=10)
+                                    font="Arial 24 bold", padx=10, pady=10,bg = full_background)
         self.heading_label.grid(row=0)
 
         self.correct_label = Label(self.summary_frame, text="Questions Answered :{}".format(correct + incorrect),
-                                    font="Arial 12 bold", padx=10, pady=2)
+                                    font="Arial 12 bold", padx=10, pady=2,bg = full_background)
         self.correct_label.grid(row=1)
 
         self.correct_label = Label(self.summary_frame, text="Correct:{}".format(correct),
-                                    font="Arial 12 bold", padx=10, pady=2)
+                                    font="Arial 12 bold", padx=10, pady=2,bg = full_background)
         self.correct_label.grid(row=2)
 
         self.incorrect_label = Label(self.summary_frame, text="Incorrect:{}".format(incorrect),
-                                    font="Arial 12 bold", padx=10, pady=2)
+                                    font="Arial 12 bold", padx=10, pady=2,bg = full_background)
         self.incorrect_label.grid(row=3)
 
         self.score_label = Label(self.summary_frame, text="Score:{}".format(correct * difficulty),
-                                    font="Arial 12 bold", padx=10, pady=2)
+                                    font="Arial 12 bold", padx=10, pady=2,bg = full_background)
         self.score_label.grid(row=4)
 
-        self.play_again_button = Button(self.summary_frame, text="Play Again",font = "arial 16 bold",width=10,height=1, command=self.to_difficulty)
+        self.play_again_button = Button(self.summary_frame, text="Play Again",font = "arial 16 bold",width=10,height=1, command=self.to_difficulty,
+                                        bg = button_background)
         self.play_again_button.grid(row=5,pady=(10,5))
 
-        self.export_button = Button(self.summary_frame, text="Export to file",font = "arial 12 bold",height=1, command=self.to_export)
+        self.export_button = Button(self.summary_frame, text="Export to file",font = "arial 12 bold",height=1, command=self.to_export,bg = button_background)
         self.export_button.grid(row=6,pady=5)
         
-        self.quit_button = Button(self.summary_frame, text="Quit",font = "arial 12 bold",height=1, command=self.close_summary)
+        self.quit_button = Button(self.summary_frame, text="Quit",font = "arial 12 bold",height=1, command=self.close_summary, bg = button_background)
         self.quit_button.grid(row=7,pady=5)
 
-    def close_summary(self,partner):
+    def close_summary(self):
         root.destroy()
     # Open Difficuulty window
     def to_difficulty(self):
