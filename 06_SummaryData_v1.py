@@ -281,7 +281,7 @@ class Summary():
         button_background = "#F1DCA7"
 
         self.summary_box = Toplevel()
-        self.summary_box.protocol('WM_DELETE_WINDOW', partial(self.close_summary, partner))
+        self.summary_box.protocol('WM_DELETE_WINDOW', partial(self.close_summary))
 
         self.summary_frame = Frame(self.summary_box,bg = full_background)
         self.summary_frame.grid()
