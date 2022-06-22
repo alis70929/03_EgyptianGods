@@ -402,70 +402,71 @@ class Export():
             self.filename_entry.config(bg="#ffafaf")
         else:
             filename = filename + ".html"
+            difficulty_name = ""
+            if difficulty == 1:
+                difficulty_name = "Easy"
+            elif difficulty == 2:
+                difficulty_name = "Medium"
+            elif difficulty == 3:
+                difficulty_name = "Hard"
 
             f = open(filename, "w+",encoding="utf-8")
             f.write(
-            '<!doctype html>'
-            '<html>'
-            '<head>'
-            '<title>Egyptian Gods Quiz Summary</title>'
-            '<meta name="description" content="Our first page">'
-            '<meta name="keywords" content="html tutorial template">'
-            '</head>'
-            '<body style="background-color: #A88770;">'
-            '    <h1>Egyptian Gods Quiz Summary</h1>'
-            '    <span>'
-            '    <div >'
-            '        <h2 >Game Statistics</h2>'
-            '        <h3>Difficulty: {}</h3>'
-            '        <h3>Questions Answered: {}</h3>'
-            '        <h3>Correct: {}</h3>'
-            '        <h3>Incorrect: {}</h3>'
-            '        <h3>Score: {}</h3>'
-            '    </div>'
-            '    </span>'
-            '    <div>'
-            '    <h2>Round Summaries</h2>'
-            '    <hr style="border-color: black;">'
-            '    <h3> Question {}</h3>'
-            '    <h3>{}</h3>'
+            '<!doctype html>\n'
+            '<html>\n'
+            '<head>\n'
+            '<title>Egyptian Gods Quiz Summary</title>\n'
+            '<meta name="description" content="Our first page">\n'
+            '<meta name="keywords" content="html tutorial template">\n'
+            '</head>\n'
+            '<body style="background-color: #A88770;">\n'
+            '    <h1>Egyptian Gods Quiz Summary</h1>\n'
+            '    <span>\n'
+            '    <div >\n'
+            '        <h2 >Game Statistics</h2>\n'
+            '        <h3>Difficulty: {}({}x score multiplier)</h3>\n'
+            '        <h3>Questions Answered: {}</h3>\n'
+            '        <h3>Correct: {}</h3>\n'
+            '        <h3>Incorrect: {}</h3>\n'
+            '        <h3>Score: {}</h3>\n'
+            '    </div>\n'
+            '    </span>\n'
+            '    <div>\n'
+            '    <h2>Round Summaries</h2>\n'.format(difficulty_name,difficulty,correct+incorrect,correct,incorrect,correct * difficulty)
+            )
+            
+            for item in range(0,correct+incorrect):
+                round_data = game_history[item]
+                f.write(
+                '    <hr style="border-color: black;">\n'
+                '    <h3> Question {} |Lives {}</h3>\n'
+                '    <h3>{}</h3>\n'.format(round_data[0],round_data[1],round_data[2])
+                )
 
-            '    <h3 style="display: inline-block;'
-            '                width: 200px;'
-            '                border: solid #020202;'
-            '                padding: 10px;'
-            '                margin: 20px;'
-            '                text-align: center;'
-            '                background-color: #F1DCA7;"> Answer 1</h3>'
+                for item in round_data[4]:
+                    background_colour = "#F1DCA7"
+                    if round_data[5] == item[0] and round_data[3] == item[1]:
+                        background_colour = "#9bdd98"
+                    elif round_data[3] == item[1]:
+                        background_colour = "#ce9745"
+                    elif round_data[5] == item[0]:
+                        background_colour = "#e78a85"
 
-            '    <h3 style="display: inline-block;'
-            '    width: 200px;'
-            '    border: solid #020202;'
-            '    padding: 10px;'
-            '    margin: 20px;'
-            '    text-align: center;'
-            '    background-color: #9bdd98;"> Answer 2</h3>'
+                    # Html for each answer
+                    f.write('    <h3 style="display: inline-block;'
+                            '                width: 200px;'
+                            '                border: solid #020202;'
+                            '                padding: 10px;'
+                            '                margin: 20px;'
+                            '                text-align: center;'
+                            '                background-color: {};">{}</h3>\n'.format(background_colour, item[1]))
+               
+            # Finishing Html tags
+            f.write(
+            '    </div>  \n'
 
-            '    <h3 style="display: inline-block;'
-            '    width: 200px;'
-            '    border: solid #020202;'
-            '    padding: 10px;'
-            '    margin: 20px;'
-            '    text-align: center;'
-            '    background-color: #ce9745;"> Answer 3</h3>'
-
-            '    <h3 style="display: inline-block;'
-            '    width: 200px;'
-            '    border: solid #020202;'
-            '    padding: 10px;'
-            '    margin: 20px;'
-            '    text-align: center;'
-            '    background-color: #e78a85;"> Answer 4</h3>'
-            '    '
-            '    </div>  '
-
-            '</body>'
-            '</html>'
+            '</body>\n'
+            '</html>\n'
 
             )
            
