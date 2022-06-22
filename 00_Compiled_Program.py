@@ -51,6 +51,7 @@ class Start:
 
 class Difficulty:
     def __init__(self, partner):
+        # Colour Pallete
         full_background = "#A88770"
         button_background = "#F1DCA7"
         # Create Difficulty window
@@ -67,6 +68,9 @@ class Difficulty:
         self.heading_label = Label(self.difficulty_frame, text="Difficulty",
                                 font="Arial 24 bold", bg=full_background,padx=10, pady=10)
         self.heading_label.grid(row=0)
+
+        # Difficulty buttons that open main game and pass through a number that corresponds to teh difficulty multiplier(1 = easy, 2 = medium, 3= hard)
+        # and also passed along the corresponding amount of lives(easy = 3, medium = 2, hard = 1)
 
         # Easy Button
         self.pad_frame = Frame(self.difficulty_frame)
@@ -85,13 +89,16 @@ class Difficulty:
                                   pady=10, bg="#e9b3b0", command=lambda: self.to_game(3,1))
         self.Hard_button.grid(row=3,pady=5)
 
+    # Closing difficulty fully closes game
     def close_difficulty(self,partner):
         root.destroy()
-        
+    
+    # function to open main game window with lives and difficulty multiplier passed through
     def to_game(self, difficulty, lives):
         Game(self, difficulty, lives)
         self.difficulty_box.withdraw()
 
+# Instructions Window
 class Instructions:
     def __init__(self,partner):
         # Disable button that opened this window to stop multiple of the same window
@@ -118,40 +125,52 @@ class Instructions:
 
 class Game:
     def __init__(self,partner,difficulty,lives):
-
+        
+        # Colour Pallete
         full_background = "#A88770"
         button_background = "#F1DCA7"
+
+        # Setup List for exporting
         self.game_history = []
+
+        # Setup stats for the game
         self.correct = 0
         self.lives = lives
         self.difficulty = difficulty
         self.round = 0
 
+        # Holds which button is the correct answer
         self.correct_answer_index = 0
+
         # Create New Window
         self.Game_box = Toplevel()
         self.Game_box.geometry("600x350")
         # Assign custom function to the closing of the window so that on close it goes to summany page instead of fully closing
         self.Game_box.protocol('WM_DELETE_WINDOW', partial(self.to_summary))
 
-        # Initialize Frame
+        # Initialize Frame to fill the entire window with the backgorund
         self.Game_box.columnconfigure(index=0,weight=1)
         self.Game_box.rowconfigure(index=0,weight=1)
         self.Game_frame = Frame(self.Game_box,bg=full_background)
         self.Game_frame.grid(sticky=NSEW)
 
         
-        # Game Question label
+        # Game Round Heading Label that shows the question you are on and lives remaining
         self.question_heading_label = Label(self.Game_frame, text="Question {} | Lives: {}".format(self.round + 1,self.lives), font="Arial 24 bold", padx=10, pady=10,bg=full_background)
         self.question_heading_label.grid(row=0,sticky=NW)
 
+        # The Actual question label that display the randomly selected question
         self.question_label = Label(self.Game_frame, text="This is where the question goes", font="Arial 12", padx=10,wrap=300,justify=LEFT,bg=full_background)
         self.question_label.grid(row=0,rowspan=3,column=0,sticky=NW,pady=50)
 
+        # Creates a frame for the anser buttons so they can line up vertically 
         self.Game_frame.columnconfigure(index=1,weight=1)
         self.answer_buttons_frame = Frame(self.Game_frame,bg=full_background)
         self.answer_buttons_frame.grid(row=0,column=1,sticky=E,rowspan=4)
 
+        # Sets up the four answer buttons, they all have a different index assigned to them as a unique identifier which also corresponds to their index in the 
+        # answer buttons list, when a user presses a button it passes the index of the chosen button along to the 
+        # answer question function to check if the selected button was correct
         button_font = "Arial 14 "
         self.answer_buttons = []
         self.answer_button1 = Button(self.answer_buttons_frame,text="button 1", font=button_font,width=20,height=2,bg=button_background,command=lambda :self.answer_question(0))
@@ -169,11 +188,13 @@ class Game:
         self.answer_button4 = Button(self.answer_buttons_frame,text="button 4", font=button_font,width=20,height=2,bg=button_background,command=lambda :self.answer_question(3))
         self.answer_button4.grid(row=3,column=1,pady=10,padx=20)
         self.answer_buttons.append(self.answer_button4)
-
+        
+        # continue button that goes to next question, only appears when the user has answered a question
         self.Game_frame.rowconfigure(index=2,weight=1)
         self.continue_button = Button(self.Game_frame, text="Continue",font = "arial 15 bold",width=15,height=1,bg=button_background, command=self.next_question)
         self.continue_button.grid(row=2,sticky=S,pady=10)
 
+        # Opens instructions window
         self.help_button = Button(self.Game_frame, text="Instructions",font = "arial 12 bold",width=10,height=1,bg=button_background, command=self.to_instructions)
         self.help_button.grid(row=3,pady=10)
 
@@ -184,11 +205,12 @@ class Game:
         self.question_list = list(reader)
         file.close()
 
-        # Get all gods from the above csv file
+        # Get all gods from the above csv file for the random worng answers
         self.gods_list  = []
         for row in self.question_list:
             self.gods_list.append(row[0])
         
+        # Run throught the question creation on first window init
         self.next_question()
     # open instructions window
     def to_instructions(self):
@@ -201,22 +223,29 @@ class Game:
             self.to_summary()
             return
         
+        # Store this rounds data to store for the game summary
         round_data = []
         # Set qeustion heading label, add to round counter
         self.question_heading_label.config(text="Question {} | Lives: {}".format(self.round + 1,self.lives))
         round_data.append(self.round)
         round_data.append(self.lives)
-        # random question
+        # get random question from question list
         current_question =  random.choice(self.question_list)
+        # Remove question from question list so that it does not repeat
         self.question_list.remove(current_question)
 
+        # display question
         question_text = "What is the name of {}".format(current_question[1])
         self.question_label.config(text=question_text)
+        # Append question to round data
         round_data.append(question_text)
 
+        # Get correct answer
         correct_answer = current_question[0]
-        print(correct_answer)
+        # Append correct answer to round data
         round_data.append(correct_answer)
+
+        # Generate 3 random answers, if random answer is same as the correct answer do not use it
         random_answers = []
         while len(random_answers) < 3:
             random_answer = self.gods_list[random.randrange(0,len(self.gods_list) - 1)]
