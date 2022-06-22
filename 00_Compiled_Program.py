@@ -4,6 +4,11 @@ import csv
 import random
 import re
 
+
+from numpy import append, diff
+
+
+
 class Start:
     def __init__(self, parent):
         full_background = "#A88770"
