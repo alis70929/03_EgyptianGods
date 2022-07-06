@@ -245,7 +245,8 @@ class Game:
         # Append correct answer to round data
         round_data.append(correct_answer)
 
-        # Generate 3 random answers, if random answer is same as the correct answer do not use it
+        # Generate 3 random answers, do not use randomly generated answer if it has already been chosen or if it is the correct answer
+        # stop once 3 valid incorrect answers are generated
         random_answers = []
         while len(random_answers) < 3:
             random_answer = self.gods_list[random.randrange(0,len(self.gods_list) - 1)]
@@ -257,34 +258,50 @@ class Game:
 
             random_answers.append(random_answer)
 
-
+        # setup a list that will hold all the random answers and which button it is assigned to
         answers_summary_list = []
+        
+        # List of buttons indexes, so that i can chose and remove button indexes already used
         buttons_indexes  = [0,1,2,3]
+        # Assign the correct answer to a button
         chosen_button_index = random.choice(buttons_indexes)
         self.answer_buttons[chosen_button_index].config(text=correct_answer,bg = "#F1DCA7",state=NORMAL)
+        # Store that this button index is the correct answer to compare with when the user answers 
         self.correct_answer_index = chosen_button_index
-        answers_summary_list.append([self.correct_answer_index,correct_answer,"Correct"])
+        #Store Corerct answer in answer summary list
+        answers_summary_list.append([self.correct_answer_index,correct_answer])
         buttons_indexes.remove(chosen_button_index)
+        # now assign the randomly chosen wrong asnwers from before to the remaining buttons
         for x in range(0,3):
             chosen_button_index = random.choice(buttons_indexes)
             chosen_random_answer = random.choice(random_answers)
             
             self.answer_buttons[chosen_button_index].config(text=chosen_random_answer,bg="#F1DCA7",state=NORMAL)
 
+            # Append what button has what answer to the answer summary list
             answers_summary_list.append([chosen_button_index,chosen_random_answer])
 
             buttons_indexes.remove(chosen_button_index)
             random_answers.remove(chosen_random_answer)
         
+        # Append button/answer data to the overall round summary list
         round_data.append(answers_summary_list)
 
+        # Remove continue button
         self.continue_button.grid_remove()
         
+        # Append All of this round info to the overall game history
         self.game_history.append(round_data)
        
         
     def answer_question(self,answer_index):
+
+        # after question is answered append to round
+        # appending here and rather than when question is generated means that it does not count as a wrong answer in the summary data
         self.round += 1
+
+        # Check if chosen asnwer is correct by comparing the button index to the correct answer index,
+        # Change button to green if correct answer, if not chosen correct answer then change colour of correct answer to Orange and chosen answer to red
         if answer_index == self.correct_answer_index:
             self.answer_buttons[answer_index].config(bg="#9bdd98")
             self.correct += 1
@@ -293,59 +310,75 @@ class Game:
             self.answer_buttons[self.correct_answer_index].config(bg="#ce9745")
             self.lives -= 1
         
+        # Add the correct answer to the end index to the end of the list of the last round
         self.game_history[len(self.game_history) - 1].append(answer_index)
         
+        # Disable all the buttons so that user cannot input more than one answer.
         for item in range(0,4):
             self.answer_buttons[item].config(state=DISABLED)
 
+        # Update Heading Label
         self.question_heading_label.config(text="Question {} | Lives: {}".format(self.round,self.lives))
+        # Make the continue button reappear
         self.continue_button.grid()
 
+    # Opens summary window while passing along, full game history and some summary stats(rounds, correct incorrect and difficulty)
     def to_summary(self):
         Summary(self,self.game_history,self.correct,self.round - self.correct,self.difficulty)
         self.Game_box.destroy()
 
 class Summary():
     def __init__(self,partner,game_history,correct,incorrect,difficulty):
-        print(game_history)
         full_background = "#A88770"
         button_background = "#F1DCA7"
 
+        # Setup Summary Window
         self.summary_box = Toplevel()
+        # Custom Close function that completely stops program
         self.summary_box.protocol('WM_DELETE_WINDOW', partial(self.close_summary))
 
+        # Frame Setup
         self.summary_frame = Frame(self.summary_box,bg = full_background)
         self.summary_frame.grid()
+        # Heading Label
         self.heading_label = Label(self.summary_frame, text="Game Over",
                                     font="Arial 24 bold", padx=10, pady=10,bg = full_background)
         self.heading_label.grid(row=0)
 
-        self.correct_label = Label(self.summary_frame, text="Questions Answered :{}".format(correct + incorrect),
+        # How many questions answered label
+        self.questions_answered_label = Label(self.summary_frame, text="Questions Answered :{}".format(correct + incorrect),
                                     font="Arial 12 bold", padx=10, pady=2,bg = full_background)
-        self.correct_label.grid(row=1)
+        self.questions_answered_label.grid(row=1)
 
+        # how many correct answers
         self.correct_label = Label(self.summary_frame, text="Correct:{}".format(correct),
                                     font="Arial 12 bold", padx=10, pady=2,bg = full_background)
         self.correct_label.grid(row=2)
 
+        # How many Incorrect answers label
         self.incorrect_label = Label(self.summary_frame, text="Incorrect:{}".format(incorrect),
                                     font="Arial 12 bold", padx=10, pady=2,bg = full_background)
         self.incorrect_label.grid(row=3)
 
+        # Score Label(correct * difficulty)
         self.score_label = Label(self.summary_frame, text="Score:{}".format(correct * difficulty),
                                     font="Arial 12 bold", padx=10, pady=2,bg = full_background)
         self.score_label.grid(row=4)
 
+        # Play Again button that opens difficulty window again
         self.play_again_button = Button(self.summary_frame, text="Play Again",font = "arial 16 bold",width=10,height=1, command=self.to_difficulty,
                                         bg = button_background)
         self.play_again_button.grid(row=5,pady=(10,5))
 
+        # Export button that opens the Export window
         self.export_button = Button(self.summary_frame, text="Export to file",font = "arial 12 bold",height=1, command=lambda : self.to_export(game_history,correct,incorrect,difficulty),bg = button_background)
         self.export_button.grid(row=6,pady=5)
         
+        # Quit button that quits game fully
         self.quit_button = Button(self.summary_frame, text="Quit",font = "arial 12 bold",height=1, command=self.close_summary, bg = button_background)
         self.quit_button.grid(row=7,pady=5)
 
+    # Quits application fully
     def close_summary(self):
         root.destroy()
     # Open Difficuulty window
@@ -353,18 +386,23 @@ class Summary():
         Difficulty(self)
         self.summary_box.destroy()
     
+    # Opens Export with summary stats and full game history passed through
     def to_export(self,game_history,correct,incorrect,difficulty):
         Export(self,game_history,correct,incorrect,difficulty)
 
 class Export():
     def __init__(self,partner,game_history,correct,incorrect,difficulty):
+        # Disable export button on Summary window so that multiple export windows do not open
         partner.export_button.config(state=DISABLED)
         background = "#A88770"
         button_background = "#F1DCA7"
+
+        # Window setup
         self.export_box = Toplevel()
 
+        # Custom close function assigned to the x so that it re enables the export buton in Summary window
         self.export_box.protocol('WM_DELETE_WINDOW', partial(self.close_export, partner))
-
+        
         self.export_frame = Frame(self.export_box, bg=background)
         self.export_frame.grid()
 
