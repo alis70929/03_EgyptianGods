@@ -5,7 +5,7 @@ import random
 import re
 
 
-from numpy import append, diff
+from numpy import append, diff, full
 
 
 
@@ -101,6 +101,10 @@ class Difficulty:
 # Instructions Window
 class Instructions:
     def __init__(self,partner):
+        
+        # Colour Palette
+        full_background = "#A88770"
+        button_background = "#F1DCA7"
         # Disable button that opened this window to stop multiple of the same window
         partner.help_button.config(state=DISABLED)
 
@@ -110,13 +114,24 @@ class Instructions:
         self.instructions_box.protocol('WM_DELETE_WINDOW', partial(self.close_instructions, partner))
 
         # Frame Init
-        self.instructions_frame = Frame(self.instructions_box)
+        self.instructions_frame = Frame(self.instructions_box,bg=full_background)
         self.instructions_frame.grid()
 
         # Heading Label 
-        self.heading_label = Label(self.instructions_frame, text="Instructions Box",
-                                    font="Arial 24 bold", padx=10, pady=10)
+        self.heading_label = Label(self.instructions_frame, text="Instructions",
+                                    font="Arial 24 bold", padx=10, pady=10,bg=full_background)
         self.heading_label.grid(row=0)
+
+        # Main Instructions Label 
+        instructions_text = "After pressing play the difficulty selector will open, chose a difficulty and you will get the corresponding amount of lives. "\
+                            "The harder the difficulty you chose the less lives you will have but you will have a higher score multiplier. \n\n"\
+                            "After selecting the difficulty you will see a new window with the question on the left, with how many lives you have remaining at the top "\
+                            "and you can chose an answer for the question by clicking one of the button to the right. \n\n"\
+                            "Once you answer, the button will either turn red for wrong and the correct answer will be in orange, or the clicked button will go green for correct. "\
+                            "A continue button will show up after answering to take you to the next question if you have lives remaining or will send you to the summary screen \n"
+        self.instructions_label = Label(self.instructions_frame, text=instructions_text,
+                                    font="Arial 12", padx=10, pady=10,bg=full_background,wrap=400)
+        self.instructions_label.grid(row=1)
 
     # custom close functionality to re enable the instructions button
     def close_instructions(self,partner):
@@ -242,6 +257,7 @@ class Game:
 
         # Get correct answer
         correct_answer = current_question[0]
+        print(correct_answer)
         # Append correct answer to round data
         round_data.append(correct_answer)
 
